@@ -10,23 +10,35 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [city, setCity] = useState('');
 
-  const handleSearch = () => {
+  const handleSearchClick = () => {
     if (city.trim()) {
       onSearch(city);
-      setCity(''); // Clear input after search
+      setCity(''); // Clear the input field after search
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleSearchClick();
     }
   };
 
   return (
-    <Box display="flex" gap={2} mb={3}>
+    <Box display="flex" alignItems="center" mt={2}>
       <TextField
         label="Enter city"
         variant="outlined"
         value={city}
         onChange={(e) => setCity(e.target.value)}
+        onKeyDown={handleKeyDown} // Trigger search on Enter key press
         fullWidth
       />
-      <Button variant="contained" color="primary" onClick={handleSearch}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSearchClick}
+        sx={{ ml: 2 }}
+      >
         Search
       </Button>
     </Box>
