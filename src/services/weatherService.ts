@@ -28,3 +28,31 @@ export async function fetchWeather(city: string): Promise<WeatherData | null> {
     return null;
   }
 }
+
+const FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
+
+export interface ForecastData {
+  date: string;
+  temperature: number;
+  condition: string;
+  icon: string;
+}
+
+export async function fetchForecast(city: string): Promise<ForecastData[] | null> {
+  try {
+    const url = `${FORECAST_URL}?q=${city}&appid=${API_KEY}&units=metric`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('City not found');
+    
+    const data = await response.json();
+    return data.list.slice(0, 5).map((entry: any) => ({
+      date: entry.dt_txt,
+      temperature: Math.round(entry.main.temp),
+      condition: entry.weather[0].description,
+      icon: `http://openweathermap.org/img/wn/${entry.weather[0].icon}.png`,
+    }));
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}

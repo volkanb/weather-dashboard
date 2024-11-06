@@ -4,19 +4,22 @@ import React, { useState } from 'react';
 import { Container, Typography } from '@mui/material';
 import SearchBar from './components/SearchBar';
 import WeatherCard from './components/WeatherCard';
+import Forecast from './components/Forecast';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { fetchWeather, WeatherData } from './services/weatherService';
+import { fetchWeather, fetchForecast, WeatherData, ForecastData } from './services/weatherService';
 
 const App: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [forecast, setForecast] = useState<ForecastData[]>([]);
 
   const handleCitySearch = async (city: string) => {
-    const data = await fetchWeather(city);
-    if (data) {
-      setWeather(data);
-    } else {
-      alert('City not found or an error occurred.');
-    }
+    const weatherData = await fetchWeather(city);
+    const forecastData = await fetchForecast(city);
+    
+    if (weatherData) setWeather(weatherData);
+    else alert('City not found or an error occurred.');
+
+    if (forecastData) setForecast(forecastData);
   };
 
   return (
@@ -33,6 +36,7 @@ const App: React.FC = () => {
           icon={<img src={weather.icon} alt={weather.condition} />}
         />
       )}
+      {forecast.length > 0 && <Forecast forecast={forecast} />}
     </Container>
   );
 };
