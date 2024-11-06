@@ -5,18 +5,18 @@ import { Container, Typography } from '@mui/material';
 import SearchBar from './components/SearchBar';
 import WeatherCard from './components/WeatherCard';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import { fetchWeather, WeatherData } from './services/weatherService';
 
 const App: React.FC = () => {
-  const [weather, setWeather] = useState({
-    city: 'New York',
-    temperature: 25,
-    condition: 'Sunny',
-    icon: <WbSunnyIcon fontSize="large" />
-  });
+  const [weather, setWeather] = useState<WeatherData | null>(null);
 
-  const handleCitySearch = (city: string) => {
-    console.log('Searching for weather in:', city);
-    // We will implement the API call here in the future to update the weather state
+  const handleCitySearch = async (city: string) => {
+    const data = await fetchWeather(city);
+    if (data) {
+      setWeather(data);
+    } else {
+      alert('City not found or an error occurred.');
+    }
   };
 
   return (
@@ -25,12 +25,14 @@ const App: React.FC = () => {
         Weather Dashboard
       </Typography>
       <SearchBar onSearch={handleCitySearch} />
-      <WeatherCard
-        city={weather.city}
-        temperature={weather.temperature}
-        condition={weather.condition}
-        icon={weather.icon}
-      />
+      {weather && (
+        <WeatherCard
+          city={weather.city}
+          temperature={weather.temperature}
+          condition={weather.condition}
+          icon={<img src={weather.icon} alt={weather.condition} />}
+        />
+      )}
     </Container>
   );
 };
