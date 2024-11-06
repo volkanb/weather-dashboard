@@ -16,7 +16,7 @@ interface ForecastProps {
 const Forecast: React.FC<ForecastProps> = ({ forecast }) => {
   return (
     <Box mt={4}>
-      <Typography variant="h6">5-Hour Forecast</Typography>
+      <Typography variant="h6">5-Day Forecast</Typography>
       <Box display="flex" justifyContent="space-around" flexWrap="wrap" mt={2}>
         {forecast.map((entry, index) => (
           <Card 
@@ -32,7 +32,9 @@ const Forecast: React.FC<ForecastProps> = ({ forecast }) => {
             }}
           >
             <CardContent>
-              <Typography variant="body2">{new Date(entry.date).toLocaleTimeString()}</Typography>
+              <Typography variant="body2">
+                {new Date(entry.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+              </Typography>
               <img src={entry.icon} alt={entry.condition} width={40} />
               <Typography variant="body1">{entry.temperature}°C</Typography>
               <Typography variant="body2" color="textSecondary">{entry.condition}</Typography>

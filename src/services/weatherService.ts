@@ -40,17 +40,22 @@ export interface ForecastData {
 
 export async function fetchForecast(city: string): Promise<ForecastData[] | null> {
   try {
-    const url = `${FORECAST_URL}?q=${city}&appid=${API_KEY}&units=metric`;
-    const response = await fetch(url);
+    const response = await fetch(`${FORECAST_URL}?q=${city}&appid=${API_KEY}&units=metric`);
     if (!response.ok) throw new Error('City not found');
     
     const data = await response.json();
-    return data.list.slice(0, 5).map((entry: any) => ({
-      date: entry.dt_txt,
-      temperature: Math.round(entry.main.temp),
-      condition: entry.weather[0].description,
-      icon: `http://openweathermap.org/img/wn/${entry.weather[0].icon}.png`,
-    }));
+
+    // Filter for one forecast per day around noon
+    const dailyForecast = data.list.filter((entry: any) => entry.dt_txt.includes("12:00:00"))
+      .slice(0, 5)
+      .map((entry: any) => ({
+        date: entry.dt_txt,
+        temperature: Math.round(entry.main.temp),
+        condition: entry.weather[0].description,
+        icon: `http://openweathermap.org/img/wn/${entry.weather[0].icon}.png`,
+      }));
+
+    return dailyForecast;
   } catch (error) {
     console.error(error);
     return null;
