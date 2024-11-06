@@ -1,13 +1,22 @@
 // src/App.tsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Typography } from '@mui/material';
 import SearchBar from './components/SearchBar';
+import WeatherCard from './components/WeatherCard';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
 const App: React.FC = () => {
+  const [weather, setWeather] = useState({
+    city: 'New York',
+    temperature: 25,
+    condition: 'Sunny',
+    icon: <WbSunnyIcon fontSize="large" />
+  });
+
   const handleCitySearch = (city: string) => {
     console.log('Searching for weather in:', city);
-    // This function will handle API calls in the future steps
+    // We will implement the API call here in the future to update the weather state
   };
 
   return (
@@ -16,7 +25,12 @@ const App: React.FC = () => {
         Weather Dashboard
       </Typography>
       <SearchBar onSearch={handleCitySearch} />
-      {/* WeatherCard and Forecast components will go here in future steps */}
+      <WeatherCard
+        city={weather.city}
+        temperature={weather.temperature}
+        condition={weather.condition}
+        icon={weather.icon}
+      />
     </Container>
   );
 };
