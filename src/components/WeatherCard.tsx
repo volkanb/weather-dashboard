@@ -13,7 +13,7 @@ interface WeatherCardProps {
 
 const WeatherCard: React.FC<WeatherCardProps> = ({ city, temperature, condition, icon }) => {
   return (
-    <Card variant="outlined" sx={{ minWidth: 275, mt: 2 }}>
+    <Card variant="outlined" sx={{ minWidth: 275, mt: 2, boxShadow: 3, borderRadius: 2, padding: 1, backgroundColor: '#e0f7fa' }}>
       <CardContent>
         <Typography variant="h5" gutterBottom>
           {city}

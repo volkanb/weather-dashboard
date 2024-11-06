@@ -35,7 +35,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ padding: 3, backgroundColor: '#f0f0f5', borderRadius: 2 }}>
       <Typography variant="h4" align="center" gutterBottom>
         Weather Dashboard
       </Typography>
