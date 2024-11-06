@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Box, Typography, Card, CardContent } from '@mui/material';
+import { getTemperatureColor } from '../utils/colorUtils';
 
 interface ForecastProps {
   forecast: {
@@ -18,7 +19,18 @@ const Forecast: React.FC<ForecastProps> = ({ forecast }) => {
       <Typography variant="h6">5-Hour Forecast</Typography>
       <Box display="flex" justifyContent="space-around" flexWrap="wrap" mt={2}>
         {forecast.map((entry, index) => (
-          <Card key={index} variant="outlined" sx={{ width: '120px', mb: 2, boxShadow: 1, borderRadius: 2, padding: 1, backgroundColor: '#e3f2fd' }}>
+          <Card 
+            key={index} 
+            variant="outlined" 
+            sx={{ 
+              width: '120px', 
+              mb: 2, 
+              boxShadow: 1, 
+              borderRadius: 2, 
+              padding: 1, 
+              backgroundColor: getTemperatureColor(entry.temperature) 
+            }}
+          >
             <CardContent>
               <Typography variant="body2">{new Date(entry.date).toLocaleTimeString()}</Typography>
               <img src={entry.icon} alt={entry.condition} width={40} />
