@@ -33,7 +33,8 @@ const FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
 
 export interface ForecastData {
   date: string;
-  temperature: number;
+  minTemp: number;
+  maxTemp: number;
   condition: string;
   icon: string;
 }
@@ -45,15 +46,34 @@ export async function fetchForecast(city: string): Promise<ForecastData[] | null
     
     const data = await response.json();
 
-    // Filter for one forecast per day around noon
-    const dailyForecast = data.list.filter((entry: any) => entry.dt_txt.includes("12:00:00"))
-      .slice(0, 5)
-      .map((entry: any) => ({
-        date: entry.dt_txt,
-        temperature: Math.round(entry.main.temp),
-        condition: entry.weather[0].description,
-        icon: `http://openweathermap.org/img/wn/${entry.weather[0].icon}.png`,
-      }));
+    // Group data points by day to calculate daily min and max temperatures
+    const dailyData: { [date: string]: any[] } = {};
+
+    data.list.forEach((entry: any) => {
+      const date = entry.dt_txt.split(" ")[0]; // Extract date portion
+      if (!dailyData[date]) {
+        dailyData[date] = [];
+      }
+      dailyData[date].push(entry);
+    });
+
+    // Calculate min/max temperature for each day and get icon/condition from the first entry
+    const dailyForecast = Object.entries(dailyData)
+      .slice(0, 5) // Limit to 5 days
+      .map(([date, entries]: [string, any[]]) => {
+        const temperatures = entries.map(entry => entry.main.temp);
+        const minTemp = Math.min(...temperatures);
+        const maxTemp = Math.max(...temperatures);
+        const { description: condition, icon } = entries[0].weather[0];
+
+        return {
+          date,
+          minTemp: Math.round(minTemp),
+          maxTemp: Math.round(maxTemp),
+          condition,
+          icon: `http://openweathermap.org/img/wn/${icon}.png`,
+        };
+      });
 
     return dailyForecast;
   } catch (error) {
