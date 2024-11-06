@@ -1,21 +1,31 @@
 // src/App.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Typography, CircularProgress, Box } from '@mui/material';
 import SearchBar from './components/SearchBar';
 import WeatherCard from './components/WeatherCard';
 import Forecast from './components/Forecast';
 import { fetchWeather, fetchForecast, WeatherData, ForecastData } from './services/weatherService';
 
+const LAST_SEARCHED_CITY_KEY = 'lastSearchedCity';
+
 const App: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [forecast, setForecast] = useState<ForecastData[]>([]);
-  const [loading, setLoading] = useState(false); // New loading state
-  const [error, setError] = useState(''); // New error state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // Load last searched city on app load
+  useEffect(() => {
+    const lastCity = localStorage.getItem(LAST_SEARCHED_CITY_KEY);
+    if (lastCity) {
+      handleCitySearch(lastCity);
+    }
+  }, []);
 
   const handleCitySearch = async (city: string) => {
     setLoading(true);
-    setError(''); // Reset error message
+    setError('');
     setWeather(null);
     setForecast([]);
 
@@ -27,6 +37,9 @@ const App: React.FC = () => {
       if (forecastData) setForecast(forecastData);
 
       if (!weatherData || !forecastData) throw new Error('City not found or an error occurred.');
+
+      // Save the searched city to local storage
+      localStorage.setItem(LAST_SEARCHED_CITY_KEY, city);
     } catch (err: any) {
       setError(err.message || 'An error occurred.');
     } finally {
@@ -35,7 +48,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ padding: 3, backgroundColor: '#f0f0f5', borderRadius: 2 }}>
+    <Container maxWidth="sm">
       <Typography variant="h4" align="center" gutterBottom>
         Weather Dashboard
       </Typography>
