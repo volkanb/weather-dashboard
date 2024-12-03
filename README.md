@@ -27,7 +27,7 @@ This Weather Dashboard is a React application that allows users to search for th
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/weather-dashboard.git
+   git clone https://github.com/volkanb/weather-dashboard.git
    cd weather-dashboard
    ```
 
